@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "dev.ethanarrowood.blockdumper.mixin",
+  "compatibilityLevel": "JAVA_25",
+  "client": [
+    "GameRendererMixin",
+    "GuiExtractMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

@@ -1,0 +1,15 @@
+pluginManagement {
+    repositories {
+        maven { url 'https://maven.fabricmc.net/' }
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+
+plugins {
+    // Auto-provisions a JDK for the Java toolchain (build.gradle) if one isn't
+    // already installed, so a fresh clone can build without manual JDK setup.
+    id 'org.gradle.toolchains.foojay-resolver-convention' version '0.8.0'
+}
+
+rootProject.name = 'block-image-dumper'

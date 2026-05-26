@@ -1,0 +1,60 @@
+plugins {
+    id 'java'
+    id 'net.fabricmc.fabric-loom' version "${loom_version}"
+}
+
+version = project.mod_version
+group = project.maven_group
+
+base {
+    archivesName = project.archives_base_name
+}
+
+loom {
+    splitEnvironmentSourceSets()
+
+    mods {
+        "block-image-dumper" {
+            sourceSet sourceSets.main
+            sourceSet sourceSets.client
+        }
+    }
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:${project.minecraft_version}"
+
+    // No mappings needed — Minecraft 26.1 ships with official unobfuscated names.
+    // No modImplementation — that config only exists for obfuscated versions.
+    // Use standard implementation; Loom wires the game classpath automatically.
+    implementation "net.fabricmc:fabric-loader:${project.loader_version}"
+    implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
+}
+
+processResources {
+    def version = project.version
+    inputs.property "version", version
+    filesMatching("fabric.mod.json") {
+        expand "version": version
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    it.options.release = 25
+}
+
+java {
+    // Resolve (or auto-provision via the foojay plugin in settings.gradle) a
+    // JDK 25 regardless of the JDK running Gradle, so `./gradlew build` is
+    // portable. Minecraft 26.1 requires Java 25.
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(25)
+    }
+    withSourcesJar()
+}
+
+jar {
+    from('LICENSE') {
+        rename { "${it}_${project.base.archivesName.get()}" }
+    }
+}
