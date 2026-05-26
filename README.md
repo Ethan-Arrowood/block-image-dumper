@@ -13,6 +13,13 @@ It was originally built to generate the block-render images for the
 but it has no dependency on that project — it just writes PNGs you can use for
 anything (atlases, wikis, web tools, etc.).
 
+## Download
+
+- **[Modrinth](https://modrinth.com/mod/block-image-dumper)** (recommended)
+- **[GitHub Releases](https://github.com/Ethan-Arrowood/block-image-dumper/releases)**
+
+Requires [Fabric API](https://modrinth.com/mod/fabric-api). Client-side only.
+
 ## How it works
 
 Minecraft 26.1's screenshot path force-sets every pixel's alpha to 255, so
