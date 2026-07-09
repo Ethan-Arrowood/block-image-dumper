@@ -42,7 +42,7 @@ import java.util.List;
  * Both modes share one mechanism: render two icons side by side in a single
  * frame and combine the two 64x64 captures.
  *   - Items: same icon over black (x=0) and white (x=64); reconstruct true alpha
- *     (the 26.1 screenshot path force-sets alpha=255, so we can't read it back).
+ *     (the 26.2 screenshot path force-sets alpha=255, so we can't read it back).
  *   - Decorations: a "base" icon (x=0) and a "decorated" icon (x=64) that differ
  *     only by the decoration; the per-pixel difference isolates it.
  *       pots  -> opaque diff: output the changed (sherd) pixels, rest transparent
@@ -163,7 +163,9 @@ public class BlockImageDumperMod implements ClientModInitializer {
         // Banners + shields: each pattern rendered in WHITE dye over a black base
         // so the brightness diff is a tintable white mask.
         Registry<BannerPattern> patterns = client.level.registryAccess().lookupOrThrow(Registries.BANNER_PATTERN);
-        ItemStack plainBanner = new ItemStack(Items.BLACK_BANNER);
+        // 26.2 merged the per-color banner constants into a ColorCollection.
+        Item blackBanner = Items.BANNER.pick(DyeColor.BLACK);
+        ItemStack plainBanner = new ItemStack(blackBanner);
         ItemStack plainShield = shieldStack(null);
         for (ResourceKey<BannerPattern> key : patterns.registryKeySet()) {
             String name = key.identifier().getPath();
@@ -171,7 +173,7 @@ public class BlockImageDumperMod implements ClientModInitializer {
             BannerPatternLayers layers = new BannerPatternLayers(
                 List.of(new BannerPatternLayers.Layer(holder, DyeColor.WHITE)));
 
-            ItemStack banner = new ItemStack(Items.BLACK_BANNER);
+            ItemStack banner = new ItemStack(blackBanner);
             banner.set(DataComponents.BANNER_PATTERNS, layers);
             jobs.add(new DecorationJob(plainBanner, banner,
                 outputDir.resolve("banner").resolve(name + ".png"), true));
@@ -242,21 +244,27 @@ public class BlockImageDumperMod implements ClientModInitializer {
     public static void onFrameRendered() {
         if (!dumping || waitingForScreenshot) return;
 
-        // Only screenshot if we actually drew this frame's icons during extract.
-        if (!itemRenderedThisFrame) return;
-        itemRenderedThisFrame = false;
-
         Minecraft client = Minecraft.getInstance();
         if (client.player == null) {
             finishDump();
             return;
         }
 
+        // Completion must be checked BEFORE the drew-this-frame gate: once the
+        // last screenshot callback has advanced currentIndex past the end,
+        // onGuiExtract stops drawing (and stops setting itemRenderedThisFrame),
+        // so gating the finish on that flag would deadlock the dump right at
+        // the end — dumping stays true, F7/F8 are ignored, and the GUI scale is
+        // never restored.
         int total = decorationMode ? jobs.size() : items.size();
         if (currentIndex >= total) {
             finishDump();
             return;
         }
+
+        // Only screenshot if we actually drew this frame's icons during extract.
+        if (!itemRenderedThisFrame) return;
+        itemRenderedThisFrame = false;
 
         waitingForScreenshot = true;
         if (decorationMode) captureDecoration(client);
@@ -274,7 +282,8 @@ public class BlockImageDumperMod implements ClientModInitializer {
         }
         Path outPath = outputDir.resolve(id.getPath() + ".png");
 
-        Screenshot.takeScreenshot(client.getMainRenderTarget(), fullImage -> {
+        // 26.2 moved the main render target from Minecraft to GameRenderer.
+        Screenshot.takeScreenshot(client.gameRenderer.mainRenderTarget(), fullImage -> {
             try {
                 // The same item over BLACK at screen x=[0,64) and WHITE at
                 // x=[64,128).  observed = C*A + B*(1-A); solving the two:
@@ -325,7 +334,8 @@ public class BlockImageDumperMod implements ClientModInitializer {
         Path outPath = job.outPath;
         boolean maskMode = job.maskMode;
 
-        Screenshot.takeScreenshot(client.getMainRenderTarget(), fullImage -> {
+        // 26.2 moved the main render target from Minecraft to GameRenderer.
+        Screenshot.takeScreenshot(client.gameRenderer.mainRenderTarget(), fullImage -> {
             try {
                 // Base icon at screen x=[0,64), decorated at x=[64,128).
                 NativeImage out = new NativeImage(NativeImage.Format.RGBA, 64, 64, false);

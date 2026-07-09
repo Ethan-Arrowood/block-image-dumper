@@ -8,9 +8,13 @@ import os
 from PIL import Image, ImageDraw, ImageFont
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-BI = os.path.expanduser('~/Programming/shulker-preview/block images')
-SHEET = os.path.expanduser(
-    '~/Programming/shulker-preview/26.1/resourcepack/'
+# Local checkout of https://github.com/Ethan-Arrowood/shulker-preview and the
+# pack version folder inside it; override via env when your paths differ.
+SP = os.path.expanduser(os.environ.get('SHULKER_PREVIEW_DIR', '~/dev/ethan-arrowood/shulker-preview'))
+SP_VERSION = os.environ.get('SHULKER_PREVIEW_VERSION', '26.2')
+BI = os.path.join(SP, 'block images')
+SHEET = os.path.join(
+    SP, SP_VERSION, 'resourcepack',
     'assets/tryashtar.shulker_preview/textures/block_sheet.png')
 FONT_BLACK = '/System/Library/Fonts/Supplemental/Arial Black.ttf'
 FONT_BOLD = '/System/Library/Fonts/Supplemental/Arial Bold.ttf'

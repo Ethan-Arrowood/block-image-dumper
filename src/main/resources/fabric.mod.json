@@ -3,7 +3,7 @@
   "id": "block-image-dumper",
   "version": "${version}",
   "name": "Block Image Dumper",
-  "description": "Press F7 to dump every registered item's inventory icon to a transparent 64x64 PNG; press F8 to dump decorated-pot, banner, and shield pattern overlays. A general-purpose item/decoration image extractor for Minecraft 26.1.",
+  "description": "Press F7 to dump every registered item's inventory icon to a transparent 64x64 PNG; press F8 to dump decorated-pot, banner, and shield pattern overlays. A general-purpose item/decoration image extractor for Minecraft 26.2.",
   "authors": ["Ethan Arrowood"],
   "contact": {
     "homepage": "https://github.com/Ethan-Arrowood/block-image-dumper",
@@ -20,9 +20,9 @@
   "mixins": [
     "block-image-dumper.mixins.json"
   ],
-  "dependencies": {
+  "depends": {
     "fabricloader": ">=0.19.2",
-    "minecraft": "~26.1",
+    "minecraft": "~26.2",
     "fabric-api": "*"
   }
 }

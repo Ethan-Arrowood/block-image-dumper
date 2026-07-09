@@ -9,7 +9,8 @@ pluginManagement {
 plugins {
     // Auto-provisions a JDK for the Java toolchain (build.gradle) if one isn't
     // already installed, so a fresh clone can build without manual JDK setup.
-    id 'org.gradle.toolchains.foojay-resolver-convention' version '0.8.0'
+    // 0.8.x references JvmVendorSpec.IBM_SEMERU, which Gradle 9 removed.
+    id 'org.gradle.toolchains.foojay-resolver-convention' version '1.0.0'
 }
 
 rootProject.name = 'block-image-dumper'

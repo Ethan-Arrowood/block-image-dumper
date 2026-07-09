@@ -1,6 +1,6 @@
 # Block Image Dumper
 
-A Fabric **client** mod for Minecraft 26.1 that exports the game's rendered icons straight to PNG files — no manual screenshotting, cropping, or transparency cleanup.
+A Fabric **client** mod for Minecraft 26.2 that exports the game's rendered icons straight to PNG files — no manual screenshotting, cropping, or transparency cleanup.
 
 - **F7 — items.** Writes every registered item's inventory icon as a clean, transparent **64×64 PNG** (one file per item).
 - **F8 — decorations.** Exports the overlays a flat icon can't capture: per-face **decorated-pot sherds** and tintable **banner & shield pattern masks**.
@@ -13,7 +13,7 @@ It has no dependency on any particular pack, though — it just writes PNGs you 
 
 ## How it works
 
-Minecraft 26.1's screenshot path force-sets every pixel opaque, so transparency can't be read back directly. The mod works around this by rendering two icons side by side in a single frame and combining the captures:
+Minecraft 26.2's screenshot path force-sets every pixel opaque, so transparency can't be read back directly. The mod works around this by rendering two icons side by side in a single frame and combining the captures:
 
 - **Items** are drawn over **black** and over **white**; comparing the two reconstructs exact per-pixel alpha.
 - **Pots** compare a plain pot against a one-sherd pot to isolate the sherd motif.

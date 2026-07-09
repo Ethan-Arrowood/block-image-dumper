@@ -24,7 +24,7 @@ loom {
 dependencies {
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
 
-    // No mappings needed — Minecraft 26.1 ships with official unobfuscated names.
+    // No mappings needed — Minecraft 26.2 ships with official unobfuscated names.
     // No modImplementation — that config only exists for obfuscated versions.
     // Use standard implementation; Loom wires the game classpath automatically.
     implementation "net.fabricmc:fabric-loader:${project.loader_version}"
@@ -46,7 +46,7 @@ tasks.withType(JavaCompile).configureEach {
 java {
     // Resolve (or auto-provision via the foojay plugin in settings.gradle) a
     // JDK 25 regardless of the JDK running Gradle, so `./gradlew build` is
-    // portable. Minecraft 26.1 requires Java 25.
+    // portable. Minecraft 26.2 requires Java 25.
     toolchain {
         languageVersion = JavaLanguageVersion.of(25)
     }
