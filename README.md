@@ -15,7 +15,7 @@ anything (atlases, wikis, web tools, etc.).
 
 ## Download
 
-- **[Modrinth](https://modrinth.com/mod/block-image-dumper)** (recommended)
+- **[Modrinth](https://modrinth.com/mod/block-image-renderer)** (recommended)
 - **[GitHub Releases](https://github.com/Ethan-Arrowood/block-image-dumper/releases)**
 
 Requires [Fabric API](https://modrinth.com/mod/fabric-api). Client-side only.

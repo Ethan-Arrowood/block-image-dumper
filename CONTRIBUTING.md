@@ -117,7 +117,7 @@ them all, and verify the mixin targets before assuming the port works:
 3. Create a GitHub Release with a new tag (e.g. `v1.1.0`) and notes.
    The `release.yml` workflow builds on JDK 25 and attaches the JAR to that
    release automatically — no manual build/upload needed.
-4. On [Modrinth](https://modrinth.com/mod/block-image-dumper), create a new
+4. On [Modrinth](https://modrinth.com/mod/block-image-renderer), create a new
    version, upload that JAR, and set Loader = Fabric, Game version = the target
    Minecraft version, with Fabric API as a required dependency.
 
