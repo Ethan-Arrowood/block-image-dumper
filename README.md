@@ -1,6 +1,6 @@
 # Block Image Dumper
 
-A Fabric **client** mod for Minecraft 26.2 that renders game icons to PNG files
+A Fabric **client** mod for Minecraft 26.3 that renders game icons to PNG files
 on disk:
 
 - **F7 — items.** Every registered item's inventory icon, as a transparent
@@ -22,7 +22,7 @@ Requires [Fabric API](https://modrinth.com/mod/fabric-api). Client-side only.
 
 ## How it works
 
-Minecraft 26.2's screenshot path force-sets every pixel's alpha to 255, so
+Minecraft 26.3's screenshot path force-sets every pixel's alpha to 255, so
 transparency can't be read back directly. Both modes work around this by
 rendering two icons side by side in a single frame and combining the two 64×64
 captures:
@@ -42,11 +42,11 @@ captures:
 | Requirement | Version |
 |---|---|
 | Java (to build) | 25 |
-| Minecraft Java Edition | 26.2 |
+| Minecraft Java Edition | 26.3 |
 | Fabric Loader | ≥ 0.19.2 |
-| Fabric API | for 26.2 |
+| Fabric API | for 26.3 |
 
-Minecraft 26.2 requires Java 25. The Gradle build uses a Java
+Minecraft 26.3 requires Java 25. The Gradle build uses a Java
 [toolchain](https://docs.gradle.org/current/userguide/toolchains.html), so it
 will locate an installed JDK 25 — or auto-provision one — regardless of the JDK
 running Gradle.
@@ -62,7 +62,7 @@ The mod JAR is written to `build/libs/block-image-dumper-1.1.0.jar`.
 ## Install
 
 Drop the JAR — plus [Fabric API](https://modrinth.com/mod/fabric-api) — into
-your Minecraft `mods/` folder for a Fabric 26.2 install:
+your Minecraft `mods/` folder for a Fabric 26.3 install:
 
 | OS | Folder |
 |---|---|
@@ -72,7 +72,7 @@ your Minecraft `mods/` folder for a Fabric 26.2 install:
 
 ## Usage
 
-1. Launch Minecraft with the Fabric 26.2 profile and load any world (a world
+1. Launch Minecraft with the Fabric 26.3 profile and load any world (a world
    and player must be present).
 2. Press **F7** to dump item icons, or **F8** to dump decoration overlays. Chat
    reports when the dump starts and finishes (`N saved, N failed`). The game may

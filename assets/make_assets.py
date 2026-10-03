@@ -11,7 +11,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 # Local checkout of https://github.com/Ethan-Arrowood/shulker-preview and the
 # pack version folder inside it; override via env when your paths differ.
 SP = os.path.expanduser(os.environ.get('SHULKER_PREVIEW_DIR', '~/dev/ethan-arrowood/shulker-preview'))
-SP_VERSION = os.environ.get('SHULKER_PREVIEW_VERSION', '26.2')
+SP_VERSION = os.environ.get('SHULKER_PREVIEW_VERSION', '26.3')
 BI = os.path.join(SP, 'block images')
 SHEET = os.path.join(
     SP, SP_VERSION, 'resourcepack',

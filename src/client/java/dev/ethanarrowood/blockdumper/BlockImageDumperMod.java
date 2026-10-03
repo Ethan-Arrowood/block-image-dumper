@@ -1,5 +1,6 @@
 package dev.ethanarrowood.blockdumper;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.platform.NativeImage;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
@@ -19,17 +20,18 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.entity.BannerPattern;
 import net.minecraft.world.level.block.entity.BannerPatternLayers;
 import net.minecraft.world.level.block.entity.PotDecorations;
-import org.lwjgl.glfw.GLFW;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Dumps item / decoration renders to PNGs for the shulker-preview pipeline.
@@ -42,7 +44,7 @@ import java.util.List;
  * Both modes share one mechanism: render two icons side by side in a single
  * frame and combine the two 64x64 captures.
  *   - Items: same icon over black (x=0) and white (x=64); reconstruct true alpha
- *     (the 26.2 screenshot path force-sets alpha=255, so we can't read it back).
+ *     (the 26.x screenshot path force-sets alpha=255, so we can't read it back).
  *   - Decorations: a "base" icon (x=0) and a "decorated" icon (x=64) that differ
  *     only by the decoration; the per-pixel difference isolates it.
  *       pots  -> opaque diff: output the changed (sherd) pixels, rest transparent
@@ -86,10 +88,12 @@ public class BlockImageDumperMod implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
+        // 26.3 replaced GLFW with SDL3, so key codes are now SDL scancodes;
+        // InputConstants tracks whichever backend the game uses.
         dumpKey = KeyMappingHelper.registerKeyMapping(new KeyMapping(
-            "key.block-image-dumper.dump", GLFW.GLFW_KEY_F7, KeyMapping.Category.MISC));
+            "key.block-image-dumper.dump", InputConstants.KEY_F7, KeyMapping.Category.MISC));
         decorationKey = KeyMappingHelper.registerKeyMapping(new KeyMapping(
-            "key.block-image-dumper.dump_decorations", GLFW.GLFW_KEY_F8, KeyMapping.Category.MISC));
+            "key.block-image-dumper.dump_decorations", InputConstants.KEY_F8, KeyMapping.Category.MISC));
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             while (dumpKey.consumeClick()) {
@@ -144,9 +148,10 @@ public class BlockImageDumperMod implements ClientModInitializer {
 
         jobs.clear();
 
-        // Pots: each sherd on the two visible icon faces.  pot_decorations is
-        // [back, left, right, front]; the data pack reads index 1 ("left") and
-        // index 3 ("right"), the two faces visible in the 30/45 gui transform.
+        // Pots: each sherd on the two visible icon faces.  pot_decorations has
+        // back/left/right/front faces; the data pack reads "left" and "front"
+        // (saved as .left / .right), the two faces visible in the 30/45 gui
+        // transform.
         ItemStack plainPot = potStack(Items.BRICK, Items.BRICK, Items.BRICK, Items.BRICK);
         for (Item item : BuiltInRegistries.ITEM) {
             Identifier id = BuiltInRegistries.ITEM.getKey(item);
@@ -193,8 +198,14 @@ public class BlockImageDumperMod implements ClientModInitializer {
 
     private static ItemStack potStack(Item back, Item left, Item right, Item front) {
         ItemStack pot = new ItemStack(Items.DECORATED_POT);
-        pot.set(DataComponents.POT_DECORATIONS, new PotDecorations(back, left, right, front));
+        // 26.3 stores each face as an Optional<ItemStackTemplate> instead of an Item.
+        pot.set(DataComponents.POT_DECORATIONS, new PotDecorations(
+            potFace(back), potFace(left), potFace(right), potFace(front)));
         return pot;
+    }
+
+    private static Optional<ItemStackTemplate> potFace(Item item) {
+        return Optional.of(new ItemStackTemplate(item));
     }
 
     private static ItemStack shieldStack(BannerPatternLayers layers) {

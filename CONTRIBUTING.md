@@ -18,7 +18,7 @@ assets/                              # Modrinth icon / gallery / description (+ 
 
 ### How the rendering works (read this before touching the capture code)
 
-Minecraft 26.2's screenshot path force-sets every pixel's alpha to `255`, so
+Minecraft 26.3's screenshot path force-sets every pixel's alpha to `255`, so
 transparency can't be read back directly. Both dump modes draw **two icons side
 by side in one frame** and combine the two 64×64 captures:
 
@@ -41,11 +41,11 @@ Two timing details matter and are easy to regress:
 
 ## Prerequisites
 
-- JDK **25** (Minecraft 26.2 requires it). The Gradle build uses a Java
+- JDK **25** (Minecraft 26.3 requires it). The Gradle build uses a Java
   [toolchain](https://docs.gradle.org/current/userguide/toolchains.html), so it
   will locate an installed JDK 25 or auto-provision one — you don't need to set
   `JAVA_HOME` to 25 as long as one is discoverable.
-- A Fabric 26.2 Minecraft install for testing.
+- A Fabric 26.3 Minecraft install for testing.
 
 ## Build & test locally
 
@@ -56,7 +56,7 @@ Two timing details matter and are easy to regress:
 The JAR lands in `build/libs/block-image-dumper-<version>.jar`. To test it:
 
 1. Copy that JAR — plus [Fabric API](https://modrinth.com/mod/fabric-api) — into
-   your Fabric 26.2 `mods/` folder.
+   your Fabric 26.3 `mods/` folder.
 2. Launch, load any world, and press **F7** (items) or **F8** (decorations).
 3. Check the output under `<minecraft>/block-images/`.
 
@@ -96,7 +96,15 @@ them all, and verify the mixin targets before assuming the port works:
    strings-level check and only surfaced as a mixin crash at launch). If a
    target moved or changed, update `@Mixin(...)` / `@Inject(method = ...)` in
    `src/client/java/.../mixin/`.
-5. **Runtime-verify.** Signatures existing isn't proof they're still *called*
+5. **Fix compile breaks.** `./gradlew build` surfaces API moves; past ones:
+   26.2 moved `getMainRenderTarget()` to `GameRenderer` and merged the banner
+   item constants into a `ColorCollection`; 26.3 replaced GLFW with SDL3 (use
+   `InputConstants.KEY_*` for key codes, never raw `GLFW` constants) and made
+   `PotDecorations` faces `Optional<ItemStackTemplate>`. Changes to item
+   component formats (like `pot_decorations`) also affect the
+   [shulker-preview](https://github.com/Ethan-Arrowood/shulker-preview) data
+   pack, so flag them there.
+6. **Runtime-verify.** Signatures existing isn't proof they're still *called*
    (e.g. 26.2 added an `extractRenderStateWithTooltipAndSubtitles` sibling).
    Launch, press F7 and F8, and eyeball the outputs per the testing notes
    above — especially a translucent item, since the whole dual-render alpha
